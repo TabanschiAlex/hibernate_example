@@ -1,36 +1,61 @@
 package com.example.hibernate_example.controller;
 
-
 import com.example.hibernate_example.model.Country;
 import com.example.hibernate_example.service.CountryService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/countries")
 public class CountryController {
-    private CountryService countryService;
+    private final CountryService countryService;
 
     public CountryController(CountryService countryService){
-        super();
         this.countryService = countryService;
     }
 
-    @PostMapping
-    public ResponseEntity<Country> create(@RequestBody Country country){
-        return new ResponseEntity<Country>(countryService.save(country), HttpStatus.CREATED);
-    }
-
     @GetMapping
-    public List<Country> get(){
-        return countryService.getAll();
+    public ResponseEntity<?> index(@RequestParam(required = false) Integer page, String sort) {
+        try {
+            return ResponseEntity.ok(countryService.getAll(page, sort));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Country> get(@PathVariable("id") long id){
-        return new ResponseEntity<Country>(countryService.get(id), HttpStatus.OK);
+    public ResponseEntity<?> edit(@PathVariable Long id) {
+        try {
+            return ResponseEntity.ok(countryService.getOne(id));
+        } catch (Exception e) {
+            return ResponseEntity.unprocessableEntity().body(e.getMessage());
+        }
+    }
+
+    @PostMapping
+    public ResponseEntity<?> store(@RequestBody Country country) {
+        try {
+            return ResponseEntity.ok(countryService.store(country));
+        } catch (Exception e) {
+            return ResponseEntity.unprocessableEntity().body(e.getMessage());
+        }
+    }
+
+    @PatchMapping("{id}")
+    public ResponseEntity<?> update(@RequestBody Country country) {
+        try {
+            return ResponseEntity.ok(countryService.update(country));
+        } catch (Exception e) {
+            return ResponseEntity.unprocessableEntity().body(e.getMessage());
+        }
+    }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<?> destroy(@PathVariable Long id) {
+        try {
+            return ResponseEntity.ok(countryService.delete(id));
+        } catch (Exception e) {
+            return ResponseEntity.unprocessableEntity().body(e.getMessage());
+        }
     }
 }
