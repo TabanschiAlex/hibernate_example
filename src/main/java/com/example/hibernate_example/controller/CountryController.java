@@ -1,6 +1,6 @@
 package com.example.hibernate_example.controller;
 
-import com.example.hibernate_example.model.Country;
+import com.example.hibernate_example.Requests.CountryRequest;
 import com.example.hibernate_example.service.CountryService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,7 +33,7 @@ public class CountryController {
     }
 
     @PostMapping
-    public ResponseEntity<?> store(@RequestBody Country country) {
+    public ResponseEntity<?> store(@RequestBody CountryRequest country) {
         try {
             return ResponseEntity.ok(countryService.store(country));
         } catch (Exception e) {
@@ -42,9 +42,9 @@ public class CountryController {
     }
 
     @PatchMapping("{id}")
-    public ResponseEntity<?> update(@RequestBody Country country) {
+    public ResponseEntity<?> update(@RequestBody CountryRequest country, @PathVariable Long id) {
         try {
-            return ResponseEntity.ok(countryService.update(country));
+            return ResponseEntity.ok(countryService.update(country, id));
         } catch (Exception e) {
             return ResponseEntity.unprocessableEntity().body(e.getMessage());
         }
